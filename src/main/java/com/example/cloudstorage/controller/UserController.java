@@ -28,9 +28,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         logger.info("Received login request for user: {}", loginRequest.getLogin());
-
         User user = userService.findUserByLogin(loginRequest.getLogin());
-
         if (user == null) {
             logger.warn("User not found for login: {}", loginRequest.getLogin());
             ErrorResponse errorResponse = new ErrorResponse();

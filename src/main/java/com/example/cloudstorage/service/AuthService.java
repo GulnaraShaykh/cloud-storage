@@ -1,6 +1,8 @@
 package com.example.cloudstorage.service;
 
+import com.example.cloudstorage.model.AuthToken;
 import com.example.cloudstorage.model.User;
+import com.example.cloudstorage.repository.AuthTokenRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -10,8 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
 public class AuthService {
@@ -22,30 +22,44 @@ public class AuthService {
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
-    private Set<String> activeTokens = new HashSet<>();
+    private final AuthTokenRepository authTokenRepository;
 
-    public void logout(String token) {
-        activeTokens.remove(token);
+    public AuthService(AuthTokenRepository authTokenRepository) {
+        this.authTokenRepository = authTokenRepository;
     }
 
-    public boolean isActiveToken(String token) {
-        return activeTokens.contains(token);
-    }
-
-    public SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
-
+    // Генерация JWT токена
     public String generateAuthToken(User user) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
-        return Jwts.builder()
+        String authToken = Jwts.builder()
                 .setSubject(user.getUserName())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey())
                 .compact();
+
+        // Сохраняем токен в базу данных
+        AuthToken token = new AuthToken(authToken, user, now, expiryDate);
+        authTokenRepository.save(token);
+
+        return authToken;
+    }
+
+    // Получаем ключ для подписи токена
+    private SecretKey getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    // Логаут - удаление токена из базы данных
+    public void logout(String token) {
+        authTokenRepository.deleteByAuthToken(token);
+    }
+
+    // Проверка, активен ли токен (есть ли он в базе)
+    public boolean isActiveToken(String token) {
+        return authTokenRepository.findByAuthToken(token).isPresent();
     }
 }
