@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping
+@RequestMapping("/cloud")
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
