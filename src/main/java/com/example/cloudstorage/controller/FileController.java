@@ -91,7 +91,7 @@ public class FileController {
                 .map(file -> {
                     Map<String, Object> fileInfo = new HashMap<>();
                     fileInfo.put("filename", file.getFileName());  // Имя файла (тип String)
-                    fileInfo.put("size", file.getFileData());          // Размер файла (тип Long)
+                    fileInfo.put("size", file.getFileData());           // Размер файла (тип Long)
                     return fileInfo;
                 })
                 .collect(Collectors.toList());
@@ -102,13 +102,18 @@ public class FileController {
 
     @PutMapping
     public ResponseEntity<String> renameFile(
-            @RequestHeader("auth-token") String authtoken,
-            @RequestParam("filename") String fileName,
-            @RequestBody RenameRequest renameRequest) {
-        if (!authService.isActiveToken(authtoken)) {
+            @RequestHeader("auth-token") String authToken,
+            @RequestParam("filename") String fileName,  // Параметр запроса для старого имени файла
+            @RequestBody RenameRequest renameRequest) { // Тело запроса содержит новое имя файла
+        // Проверяем, активен ли токен
+        if (!authService.isActiveToken(authToken)) {
             return ResponseEntity.status(401).body("Unauthorized");
         }
+
+        // Пытаемся переименовать файл
         boolean isRenamed = fileService.renameFile(fileName, renameRequest.getNewName());
+
+        // Возвращаем ответ в зависимости от результата
         if (isRenamed) {
             return ResponseEntity.status(200).body("File renamed successfully");
         } else {
