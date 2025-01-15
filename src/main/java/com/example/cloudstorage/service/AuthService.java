@@ -4,7 +4,6 @@ import com.example.cloudstorage.model.AuthToken;
 import com.example.cloudstorage.model.User;
 import com.example.cloudstorage.repository.AuthTokenRepository;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
