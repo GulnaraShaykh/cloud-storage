@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,8 +21,6 @@ public class UserController {
     private UserService userService;
     @Autowired
     private AuthService authService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
@@ -35,7 +32,7 @@ public class UserController {
             errorResponse.setMessage("Invalid login or password");
             errorResponse.setId(400);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        } else if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+        } else if (!loginRequest.getPassword().equals(user.getPassword()) ) {
             logger.warn("Incorrect password for user: {}", loginRequest.getLogin());
             ErrorResponse errorResponse = new ErrorResponse();
             errorResponse.setMessage("Invalid login or password");

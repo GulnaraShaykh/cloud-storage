@@ -15,5 +15,4 @@ class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .allowedOrigins("http://localhost:8081")
                 .allowedMethods("*");
-    }
-}
+    }}

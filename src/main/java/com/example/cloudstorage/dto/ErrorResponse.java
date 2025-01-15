@@ -1,8 +1,5 @@
 package com.example.cloudstorage.dto;
 
-import jakarta.persistence.Entity;
-import org.springframework.stereotype.Component;
-
 
 public class ErrorResponse {
     private String message;
