@@ -6,6 +6,7 @@ import com.example.cloudstorage.repository.AuthTokenRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class AuthService {
 
     @Value("${jwt.expiration}")
     private long jwtExpiration;
-
+    @Autowired
     private final AuthTokenRepository authTokenRepository;
 
     public AuthService(AuthTokenRepository authTokenRepository) {
@@ -40,9 +41,8 @@ public class AuthService {
                 .compact();
 
         // Сохраняем токен в базу данных
-        AuthToken token = new AuthToken(authToken, user, now, expiryDate);
+        AuthToken token = new AuthToken(authToken,user,now, expiryDate);
         authTokenRepository.save(token);
-
         return authToken;
     }
 
@@ -54,7 +54,7 @@ public class AuthService {
 
     // Логаут - удаление токена из базы данных
     public void logout(String token) {
-        authTokenRepository.deleteByAuthToken(token);
+        authTokenRepository.deleteAuthTokensByAuthToken(token);
     }
 
     // Проверка, активен ли токен (есть ли он в базе)

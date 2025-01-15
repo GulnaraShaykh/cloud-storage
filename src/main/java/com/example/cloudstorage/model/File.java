@@ -1,7 +1,9 @@
 package com.example.cloudstorage.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import org.hibernate.annotations.Type;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "files")
@@ -15,15 +17,26 @@ public class File {
     private String fileName;
 
     @Lob
-    @Column(name = "file_data", nullable = false)
-    private byte[] fileData;
+    @Column(name = "file_data", nullable = true)
+    private long fileData;
 
-    @Column(name = "uploaded_at", nullable = false)
-    private LocalDateTime uploadedAt;
+    @Column(name = "uploaded_at", nullable = true)
+    private Date uploadedAt;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
+
+
+    public File( String fileName, long fileData, Date uploadedAt) {
+        this.fileName = fileName;
+        this.fileData = fileData;
+        this.uploadedAt = uploadedAt;
+    }
+
+    public File() {
+
+    }
 
     // Getters and Setters
     public long getId() {
@@ -42,19 +55,19 @@ public class File {
         this.fileName = fileName;
     }
 
-    public byte[] getFileData() {
+    public long getFileData() {
         return fileData;
     }
 
-    public void setFileData(byte[] fileData) {
+    public void setFileData(long fileData) {
         this.fileData = fileData;
     }
 
-    public LocalDateTime getUploadedAt() {
+    public Date getUploadedAt() {
         return uploadedAt;
     }
 
-    public void setUploadedAt(LocalDateTime uploadedAt) {
+    public void setUploadedAt(Date uploadedAt) {
         this.uploadedAt = uploadedAt;
     }
 }

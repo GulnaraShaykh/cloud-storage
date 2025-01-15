@@ -2,8 +2,10 @@ package com.example.cloudstorage.controller;
 
 import com.example.cloudstorage.dto.RenameRequest;
 import com.example.cloudstorage.model.File;
+import com.example.cloudstorage.model.User;
 import com.example.cloudstorage.service.AuthService;
 import com.example.cloudstorage.service.FileService;
+import com.example.cloudstorage.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -13,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/file")
@@ -31,7 +34,7 @@ public class FileController {
             return ResponseEntity.status(401).body("Unauthorized error");
         }
         try {
-            fileService.uploadFile(file);
+            fileService.uploadFile(file, fileName);
             return ResponseEntity.status(200).body("Success upload");
         } catch (IOException e) {
             return ResponseEntity.status(400).body("Error input data " + e.getMessage());
@@ -53,23 +56,23 @@ public class FileController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<?> downloadFile(
-            @RequestHeader("auth-token") String authToken,
-            @RequestParam("filename") String fileName) {
-        if (!authService.isActiveToken(authToken)) {
-            return ResponseEntity.status(401).body(null);
-        }
-        byte[] fileData = fileService.downloadFile(fileName);
-        if (fileData != null) {
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(fileData);
-        } else {
-            return ResponseEntity.status(404).body(null);
-        }
-    }
+//    @GetMapping
+//    public ResponseEntity<?> downloadFile(
+//            @RequestHeader("auth-token") String authToken,
+//            @RequestParam("filename") String fileName) {
+//        if (!authService.isActiveToken(authToken)) {
+//            return ResponseEntity.status(401).body(null);
+//        }
+//        byte[] fileData = fileService.downloadFile(fileName);
+//        if (fileData != null) {
+//            return ResponseEntity.ok()
+//                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+//                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                    .body(fileData);
+//        } else {
+//            return ResponseEntity.status(404).body(null);
+//        }
+//    }
 
     @GetMapping("/list")
     public ResponseEntity<List<File>> getAllFiles(@RequestHeader("auth-token") String token) {

@@ -3,7 +3,7 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "auth_tokens")
+@Table(name = "tokens")
 public class AuthToken {
 
     @Id

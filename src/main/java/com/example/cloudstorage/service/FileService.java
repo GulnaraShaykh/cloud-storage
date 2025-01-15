@@ -1,12 +1,16 @@
 package com.example.cloudstorage.service;
 
 import com.example.cloudstorage.model.File;
+import com.example.cloudstorage.model.User;
 import com.example.cloudstorage.repository.FileRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,13 +18,15 @@ import java.util.Optional;
 public class FileService {
     @Autowired
     private FileRepository fileRepository;
+    @Autowired
+    private EntityManager entityManager;
 
-    public void uploadFile(MultipartFile file) throws IOException {
-        byte[] fileBytes = file.getBytes();
-
+    @Transactional
+    public void uploadFile(MultipartFile file, String fileName) throws IOException {
         File newFile = new File();
-        newFile.setFileName(file.getOriginalFilename());
-        newFile.setFileData(fileBytes);
+        newFile.setFileName(fileName); // Название файла
+        newFile.setFileData(file.getSize()); // Бинарные данные
+        newFile.setUploadedAt(new Date()); // Дата загрузки
         fileRepository.save(newFile);
 
     }
@@ -37,10 +43,10 @@ public class FileService {
         return false;
     }
 
-    public byte[] downloadFile(String fileName) {
-        Optional<File> file = fileRepository.findByFileName(fileName);
-        return file.map(File::getFileData).orElse(null);
-    }
+//    public byte[] downloadFile(String fileName) {
+//        Optional<File> file = fileRepository.findByFileName(fileName);
+//        return file.map(File::getFileData).orElse(null);
+//    }
 
     public boolean renameFile(String filename, String newName) {
         fileRepository.findByFileName(filename)
