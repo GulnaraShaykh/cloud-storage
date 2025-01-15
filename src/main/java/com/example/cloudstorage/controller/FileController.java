@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/file")
@@ -63,27 +66,38 @@ public class FileController {
 //        if (!authService.isActiveToken(authToken)) {
 //            return ResponseEntity.status(401).body(null);
 //        }
-//        byte[] fileData = fileService.downloadFile(fileName);
-//        if (fileData != null) {
-//            return ResponseEntity.ok()
-//                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-//                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-//                    .body(fileData);
-//        } else {
-//            return ResponseEntity.status(404).body(null);
-//        }
-//    }
+
+    /// /        byte[] fileData = fileService.downloadFile(fileName);
+    /// /        if (fileData != null) {
+    /// /            return ResponseEntity.ok()
+    /// /                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+    /// /                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+    /// /                    .body(fileData);
+    /// /        } else {
+    /// /            return ResponseEntity.status(404).body(null);
+    ///  }
 
     @GetMapping("/list")
-    public ResponseEntity<List<File>> getAllFiles(@RequestHeader("auth-token") String token) {
+    public ResponseEntity<?> getAllFiles(@RequestHeader("auth-token") String token) {
         if (!authService.isActiveToken(token)) {
             return ResponseEntity.status(401).body(null);
         }
+
+        // Получение всех файлов
         List<File> files = fileService.getAllFiles();
-        if (files.isEmpty()) {
-            return ResponseEntity.status(204).build();
-        }
-        return ResponseEntity.ok(files);
+
+        // Преобразование списка файлов в список, содержащий только имя и размер файла
+        List<Map<String, Object>> fileInfoList = files.stream()
+                .map(file -> {
+                    Map<String, Object> fileInfo = new HashMap<>();
+                    fileInfo.put("filename", file.getFileName());  // Имя файла (тип String)
+                    fileInfo.put("size", file.getFileData());          // Размер файла (тип Long)
+                    return fileInfo;
+                })
+                .collect(Collectors.toList());
+
+        // Возврат списка файлов с именами и размерами
+        return ResponseEntity.ok(fileInfoList);
     }
 
     @PutMapping
