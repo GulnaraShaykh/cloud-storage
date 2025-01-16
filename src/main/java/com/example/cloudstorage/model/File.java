@@ -13,9 +13,8 @@ public class File {
     @Column(name = "file_name", nullable = false)
     private String fileName;
 
-
-    @Column(name = "file-size", nullable = true)
-    private long fileSize;
+    @Column(name = "file_size", nullable = true)
+    private Long fileSize;
 
     @Column(name = "file_path", nullable = false)
     private String filePath;

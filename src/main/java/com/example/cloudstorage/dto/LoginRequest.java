@@ -1,8 +1,9 @@
 package com.example.cloudstorage.dto;
 
+
 import org.springframework.stereotype.Component;
 
-
+@Component
 public class LoginRequest {
     private String login;
     private String password;

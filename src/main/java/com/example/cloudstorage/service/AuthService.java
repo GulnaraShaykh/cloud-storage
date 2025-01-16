@@ -45,16 +45,22 @@ public class AuthService {
         return authToken;
     }
 
-        private SecretKey getSigningKey() {
+    // Получаем ключ для подписи токена
+    private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-        public void logout(String token) {
+    // Логаут - удаление токена из базы данных
+    public void logout(String token) {
         authTokenRepository.deleteAuthTokensByAuthToken(token);
     }
 
-        public boolean isActiveToken(String token) {
+    // Проверка, активен ли токен (есть ли он в базе)
+    public boolean isActiveToken(String token) {
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7); // Убираем первые 7 символов
+        }
         return authTokenRepository.findByAuthToken(token).isPresent();
     }
 }

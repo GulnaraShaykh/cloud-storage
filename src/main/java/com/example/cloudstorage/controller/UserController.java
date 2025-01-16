@@ -3,6 +3,7 @@ package com.example.cloudstorage.controller;
 import com.example.cloudstorage.dto.*;
 import com.example.cloudstorage.model.User;
 import com.example.cloudstorage.service.AuthService;
+import com.example.cloudstorage.service.FileService;
 import com.example.cloudstorage.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/cloud")
+@RequestMapping
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -21,6 +22,9 @@ public class UserController {
     private UserService userService;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private FileService fileService;
+    @Autowired
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {

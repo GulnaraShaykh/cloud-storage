@@ -20,14 +20,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/file")
+@RequestMapping
 public class FileController {
     @Autowired
     private FileService fileService;
     @Autowired
     private AuthService authService;
 
-    @PostMapping
+    @PostMapping("/file")
     public ResponseEntity<String> uploadFile(
             @RequestHeader("auth-token") String authToken,
             @RequestParam("filename") String fileName,
@@ -42,7 +42,7 @@ public class FileController {
         }
     }
 
-    @DeleteMapping
+    @DeleteMapping("/file")
     public ResponseEntity<String> deleteFile(
             @RequestHeader("auth-token") String authToken,
             @RequestParam("filename") String fileName) {
@@ -92,8 +92,9 @@ public class FileController {
         List<Map<String, Object>> fileInfoList = files.stream()
                 .map(file -> {
                     Map<String, Object> fileInfo = new HashMap<>();
-                    fileInfo.put("filename", file.getFileName());  // Имя файла (тип String)
-                    fileInfo.put("size", file.getFileSize());           // Размер файла (тип Long)
+                    fileInfo.put("filename", file.getFileName());       // Имя файла
+                    fileInfo.put("size", file.getFileSize());          // Размер файла
+                    fileInfo.put("lastModified", file.getUploadedAt()); // Дата изменения файла
                     return fileInfo;
                 })
                 .collect(Collectors.toList());
@@ -101,7 +102,8 @@ public class FileController {
         return ResponseEntity.ok(fileInfoList);
     }
 
-    @PutMapping
+
+    @PutMapping("/file")
     public ResponseEntity<String> renameFile(
             @RequestHeader("auth-token") String authToken,
             @RequestParam("filename") String fileName,  // Параметр запроса для старого имени файла
