@@ -1,8 +1,5 @@
 package com.example.cloudstorage.model;
-
 import jakarta.persistence.*;
-import org.hibernate.annotations.Type;
-
 import java.util.Date;
 
 @Entity

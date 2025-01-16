@@ -1,5 +1,4 @@
 package com.example.cloudstorage.model;
-
 import jakarta.persistence.*;
 
 @Entity
