@@ -40,25 +40,21 @@ public class AuthService {
                 .signWith(getSigningKey())
                 .compact();
 
-        // Сохраняем токен в базу данных
         AuthToken token = new AuthToken(authToken,user,now, expiryDate);
         authTokenRepository.save(token);
         return authToken;
     }
 
-    // Получаем ключ для подписи токена
-    private SecretKey getSigningKey() {
+        private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // Логаут - удаление токена из базы данных
-    public void logout(String token) {
+        public void logout(String token) {
         authTokenRepository.deleteAuthTokensByAuthToken(token);
     }
 
-    // Проверка, активен ли токен (есть ли он в базе)
-    public boolean isActiveToken(String token) {
+        public boolean isActiveToken(String token) {
         return authTokenRepository.findByAuthToken(token).isPresent();
     }
 }
