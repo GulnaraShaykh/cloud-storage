@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -23,11 +25,17 @@ public class FileService {
 
     @Transactional
     public void uploadFile(MultipartFile file, String fileName) throws IOException {
-        File newFile = new File();
-        newFile.setFileName(fileName); // Название файла
-        newFile.setFileData(file.getSize()); // Бинарные данные
-        newFile.setUploadedAt(new Date()); // Дата загрузки
-        fileRepository.save(newFile);
+        String filePath = "C:\\my_uploads\\" + fileName;
+        Path path = Paths.get(filePath);
+// Теперь передайте path в метод, который ожидает Path, а не File
+        file.transferTo(path.toFile());
+
+        File saveFile = new File();
+        saveFile.setFileName(fileName); // Название файла
+        saveFile.setFileSize(file.getSize());
+        saveFile.setFilePath(filePath); //// Бинарные данные
+        saveFile.setUploadedAt(new Date()); // Дата загрузки
+        fileRepository.save(saveFile);
 
     }
 
@@ -42,11 +50,6 @@ public class FileService {
         }
         return false;
     }
-
-//    public byte[] downloadFile(String fileName) {
-//        Optional<File> file = fileRepository.findByFileName(fileName);
-//        return file.map(File::getFileData).orElse(null);
-//    }
 
     public boolean renameFile(String filename, String newName) {
         fileRepository.findByFileName(filename)

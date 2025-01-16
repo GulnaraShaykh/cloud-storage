@@ -12,9 +12,7 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-
        public User findUserByLogin(String login) {
         return userRepository.findByLogin(login);
     }
-
 }

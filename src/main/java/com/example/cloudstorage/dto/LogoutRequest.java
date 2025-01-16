@@ -2,7 +2,6 @@ package com.example.cloudstorage.dto;
 
 import org.springframework.stereotype.Component;
 
-
 public class LogoutRequest {
     private String authToken;
 

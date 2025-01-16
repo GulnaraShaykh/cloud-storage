@@ -23,7 +23,6 @@ public class AuthToken {
     @Column(name = "expires_at")
     private Date expiresAt;
 
-    // Конструктор для создания нового токена
     public AuthToken(String authToken, User user, Date issuedAt, Date expiresAt) {
         this.authToken = authToken;
         this.user = user;
@@ -35,7 +34,6 @@ public class AuthToken {
 
     }
 
-    // Геттеры и сеттеры
     public Long getId() {
         return id;
     }

@@ -2,22 +2,21 @@ package com.example.cloudstorage.controller;
 
 import com.example.cloudstorage.dto.RenameRequest;
 import com.example.cloudstorage.model.File;
-import com.example.cloudstorage.model.User;
 import com.example.cloudstorage.service.AuthService;
 import com.example.cloudstorage.service.FileService;
-import com.example.cloudstorage.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -59,23 +58,32 @@ public class FileController {
         }
     }
 
-//    @GetMapping
-//    public ResponseEntity<?> downloadFile(
-//            @RequestHeader("auth-token") String authToken,
-//            @RequestParam("filename") String fileName) {
-//        if (!authService.isActiveToken(authToken)) {
-//            return ResponseEntity.status(401).body(null);
-//        }
+    @GetMapping("/file")
+    public ResponseEntity<?> downloadFile(
+            @RequestHeader("auth-token") String authToken,
+            @RequestParam("filename") String fileName) {
 
-    /// /        byte[] fileData = fileService.downloadFile(fileName);
-    /// /        if (fileData != null) {
-    /// /            return ResponseEntity.ok()
-    /// /                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-    /// /                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-    /// /                    .body(fileData);
-    /// /        } else {
-    /// /            return ResponseEntity.status(404).body(null);
-    ///  }
+        if (!authService.isActiveToken(authToken)) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        String filePath = "C:\\my_uploads\\" + fileName;  // Здесь указываете свой путь
+        java.io.File file = new java.io.File(filePath);
+
+        if (!file.exists()) {
+            return ResponseEntity.status(404).body("File not found");
+        }
+
+        try {
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Error reading file: " + e.getMessage());
+        }
+    }
 
     @GetMapping("/list")
     public ResponseEntity<?> getAllFiles(@RequestHeader("auth-token") String token) {
@@ -83,20 +91,17 @@ public class FileController {
             return ResponseEntity.status(401).body(null);
         }
 
-        // Получение всех файлов
         List<File> files = fileService.getAllFiles();
 
-        // Преобразование списка файлов в список, содержащий только имя и размер файла
         List<Map<String, Object>> fileInfoList = files.stream()
                 .map(file -> {
                     Map<String, Object> fileInfo = new HashMap<>();
                     fileInfo.put("filename", file.getFileName());  // Имя файла (тип String)
-                    fileInfo.put("size", file.getFileData());           // Размер файла (тип Long)
+                    fileInfo.put("size", file.getFileSize());           // Размер файла (тип Long)
                     return fileInfo;
                 })
                 .collect(Collectors.toList());
 
-        // Возврат списка файлов с именами и размерами
         return ResponseEntity.ok(fileInfoList);
     }
 
@@ -105,15 +110,13 @@ public class FileController {
             @RequestHeader("auth-token") String authToken,
             @RequestParam("filename") String fileName,  // Параметр запроса для старого имени файла
             @RequestBody RenameRequest renameRequest) { // Тело запроса содержит новое имя файла
-        // Проверяем, активен ли токен
+
         if (!authService.isActiveToken(authToken)) {
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        // Пытаемся переименовать файл
         boolean isRenamed = fileService.renameFile(fileName, renameRequest.getNewName());
 
-        // Возвращаем ответ в зависимости от результата
         if (isRenamed) {
             return ResponseEntity.status(200).body("File renamed successfully");
         } else {
