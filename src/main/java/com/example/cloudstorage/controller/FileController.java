@@ -35,8 +35,7 @@ public class FileController {
         if (!authService.isActiveToken(authToken)) {
             return ResponseEntity.status(401).body("Unauthorized error");
         }
-        try {
-            fileService.uploadFile(file, fileName);
+        try {fileService.uploadFile(file, fileName);
             return ResponseEntity.status(200).body("Success upload");
         } catch (IOException e) {
             return ResponseEntity.status(400).body("Error input data " + e.getMessage());
@@ -66,16 +65,13 @@ public class FileController {
         if (!authService.isActiveToken(authToken)) {
             return ResponseEntity.status(401).body("Unauthorized");
         }
-
         String filePath = "C:\\my_uploads\\" + fileName;  // Здесь указываете свой путь
         java.io.File file = new java.io.File(filePath);
 
         if (!file.exists()) {
             return ResponseEntity.status(404).body("File not found");
         }
-
-        try {
-            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+        try {InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
@@ -114,9 +110,7 @@ public class FileController {
         if (!authService.isActiveToken(authToken)) {
             return ResponseEntity.status(401).body("Unauthorized");
         }
-
         boolean isRenamed = fileService.renameFile(fileName, renameRequest.getNewName());
-
         if (isRenamed) {
             return ResponseEntity.status(200).body("File renamed successfully");
         } else {
