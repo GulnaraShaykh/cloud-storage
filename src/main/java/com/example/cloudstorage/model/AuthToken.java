@@ -1,9 +1,16 @@
 package com.example.cloudstorage.model;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 
 @Entity
 @Table(name = "tokens")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class AuthToken {
 
     @Id
@@ -27,50 +34,6 @@ public class AuthToken {
         this.authToken = authToken;
         this.user = user;
         this.issuedAt = issuedAt;
-        this.expiresAt = expiresAt;
-    }
-
-    public AuthToken() {
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getAuthToken() {
-        return authToken;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Date getIssuedAt() {
-        return issuedAt;
-    }
-
-    public Date getExpiresAt() {
-        return expiresAt;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setAuthToken(String authToken) {
-        this.authToken = authToken;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setIssuedAt(Date issuedAt) {
-        this.issuedAt = issuedAt;
-    }
-
-    public void setExpiresAt(Date expiresAt) {
         this.expiresAt = expiresAt;
     }
 }

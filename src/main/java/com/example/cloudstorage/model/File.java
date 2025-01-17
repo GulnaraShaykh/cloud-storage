@@ -1,9 +1,16 @@
 package com.example.cloudstorage.model;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 
 @Entity
 @Table(name = "files")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class File {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,66 +33,10 @@ public class File {
     @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
-    public File() {
-
-    }
-
-    public File(String filePath) {
-        this.filePath = filePath;
-    }
-
     public File(String fileName, long fileSize, String filePath, Date uploadedAt) {
         this.fileName = fileName;
         this.fileSize = fileSize;
         this.filePath = filePath;
         this.uploadedAt = uploadedAt;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public Date getUploadedAt() {
-        return uploadedAt;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public long getFileSize() {
-        return fileSize;
-    }
-
-    public void setFileSize(long fileSize) {
-        this.fileSize = fileSize;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public void setUploadedAt(Date uploadedAt) {
-        this.uploadedAt = uploadedAt;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }
