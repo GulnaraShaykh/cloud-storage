@@ -22,9 +22,7 @@ public class UserController {
     private UserService userService;
     @Autowired
     private AuthService authService;
-    @Autowired
-    private FileService fileService;
-    @Autowired
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {

@@ -12,4 +12,8 @@ public class ErrorResponse {
     public void setId(int id) {
         this.id = id;
     }
+
+    public String getMessage() {
+        return message;
+    }
 }

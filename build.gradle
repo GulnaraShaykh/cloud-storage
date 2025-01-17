@@ -27,6 +27,8 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'io.jsonwebtoken:jjwt:0.12.6'
     implementation 'ch.qos.logback:logback-classic:1.4.6'
+    testImplementation 'org.testcontainers:junit-jupiter:1.19.0'
+    testImplementation 'org.testcontainers:postgresql:1.19.0'
 }
 
 tasks.named('test') {
