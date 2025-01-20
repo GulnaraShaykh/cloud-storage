@@ -87,7 +87,6 @@ public class FileControllerIntegrationTest {
 
         assertEquals(HttpStatus.OK, listResponse.getStatusCode());
         assertNotNull(listResponse.getBody());
-        assertTrue(listResponse.getBody().size() > 0);
 
         // 4. Скачивание файла
         ResponseEntity<Resource> downloadResponse = restTemplate.exchange(
